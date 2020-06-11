@@ -8,4 +8,4 @@ def test_is_leapyear():
     assert not is_leapyear(2019), "value was True, should be False"
     assert not is_leapyear(1900), "value was True, should be False"
     assert is_leapyear(1600), "value was False, should be True"
-    assert not is_leapyear(2010), "value was False, should be True"
+    assert not is_leapyear(2010), "value was True, should be False"
