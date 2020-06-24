@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 source = requests.get('https://www.tsa.gov/coronavirus/passenger-throughput')
 soup = bs.BeautifulSoup(source.text, features='lxml')
 table = soup.table
-chart_data = ()
 dates = []
 percentages = []
 
@@ -26,8 +25,7 @@ for tr in table.find_all('tr'):
 
 y = percentages[::-1]
 x = dates[::-1]
-chart_data = (percentages[::-1])
-plt.style.use('seaborn-dark')
+plt.style.use('seaborn')
 plt.ylabel('Percentage of previous year passengers (TSA)')
 # plt.plot(chart_data, linewidth=2.0)
 plt.plot(x, y, linewidth=2.0)
