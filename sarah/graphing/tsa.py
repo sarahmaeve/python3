@@ -17,7 +17,7 @@ for tr in table.find_all('tr'):
         # check for blank final row[] and effectively ignore it
         if row and row[0] != 'Date':
             dates.append(datetime.strptime(row[0], '%m/%d/%Y'))
-            percentages.append(int(row[1].replace(',', '')) / int(row[2].replace(',', '')))
+            percentages.append(100 * int(row[1].replace(',', '')) / int(row[2].replace(',', '')))
     except IndexError:
         # just in case something is misformatted
         print(row)
