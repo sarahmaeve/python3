@@ -1,34 +1,40 @@
-""" simple fetch and graph of TSA passenger data """
-from datetime import datetime
+import pandas as pd
+import numpy as np
 import requests
-import bs4 as bs
 import matplotlib.pyplot as plt
 
-source = requests.get('https://www.tsa.gov/coronavirus/passenger-throughput')
-soup = bs.BeautifulSoup(source.text, features='lxml')
-table = soup.table
-dates = []
-percentages = []
+# Pandas test to reformat TSA passenger data into a more usable format.
 
-for tr in table.find_all('tr'):
-    td = tr.find_all('td')
-    row = [i.text for i in td]
-    try:
-        # check for blank final row[] and effectively ignore it
-        if row and row[0] != 'Date':
-            dates.append(datetime.strptime(row[0].strip(), '%m/%d/%Y'))
-            percentages.append(100 * int(row[1].replace(',', '').strip()) / int(row[2].replace(',', '').strip()))
-    except IndexError:
-        # just in case something is misformatted
-        print(row)
-        print("Processing stopped.")
+# impersonate headers to avoid 403 error
+# TSA official passenger data
+tsa_url = 'https://www.tsa.gov/coronavirus/passenger-throughput'
+header = {
+  "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
+  "X-Requested-With": "XMLHttpRequest"
+}
 
-y = percentages[::-1]
-x = dates[::-1]
-plt.style.use('seaborn')
-plt.ylabel('Percentage of previous year passengers (TSA)')
-# plt.plot(chart_data, linewidth=2.0)
-plt.plot(x, y, linewidth=2.0)
-plt.gcf().autofmt_xdate()
-plt.title('Decline in Number of Airline Passengers in the COVID-19 Era')
+r = requests.get(tsa_url, headers=header)
+
+table_tsa =  pd.read_html(r.text)
+
+print(f'Total tables: {len(table_tsa)}')
+
+df = table_tsa[0]
+
+# strip the year so it's easier to do comparisons
+df['Date'] = df['Date'].astype('datetime64').dt.strftime('%m/%d')
+df['2022'].astype('float64')
+
+# can move this into data formatting during the read_html() call?
+df['2021'].astype('float64')
+df['2020'].astype('float64')
+df['2019'].astype('float64')
+
+df.sort_values(by='Date',inplace=True)
+
+plt.style.use('seaborn-whitegrid')
+df.plot.line(x='Date', y=['2019','2020','2021','2022'])
+plt.title('TSA Passenger Data (2019 : no COVID-19)')
+plt.xlabel('Day of Year')
+plt.ylabel('Passengers (Millions)')
 plt.show()
