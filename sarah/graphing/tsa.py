@@ -3,6 +3,7 @@ import numpy as np
 import requests
 import matplotlib.pyplot as plt
 
+## THIS IS NOW DEPRECATED IN 2024 as the TSA has changed how they publish data.
 def main():
     # TSA official passenger data
     tsa_url = 'https://www.tsa.gov/coronavirus/passenger-throughput'
@@ -20,7 +21,7 @@ def main():
     df = table_tsa[0]
 
     # strip the year so it's easier to do comparisons
-    df['Date'] = df['Date'].astype('datetime64').dt.strftime('%m/%d')
+    df['Date'] = df['Date'].astype('datetime64[ns]').dt.strftime('%m/%d')
     df['2023'] = df['2023'].astype('float64')
     df['2022'] = df['2022'].astype('float64')
     df['2021'] = df['2021'].astype('float64')
